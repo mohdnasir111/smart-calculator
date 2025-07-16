@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e1e2f, #2a2d37);
+        }
+
+        .calculator {
+            background: #1c2526;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .display {
+            background: #2e2e3f;
+            color: #ffffff;
+            font-size: 2.5em;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: right;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .history {
+            background: #2e2e3f;
+            color: #b0b0b0;
+            font-size: 0.9em;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .history div {
+            margin-bottom: 5px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            background: #3a3f4a;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background: #4a4f5a;
+            transform: scale(1.05);
+        }
+
+        .operator {
+            background: #ff6f00;
+        }
+
+        .operator:hover {
+            background: #e65c00;
+        }
+
+        .function {
+            background: #0288d1;
+        }
+
+        .function:hover {
+            background: #0277bd;
+        }
+
+        .equals {
+            background: #00c853;
+        }
+
+        .equals:hover {
+            background: #00b248;
+        }
+
+        .clear {
+            background: #d32f2f;
+        }
+
+        .clear:hover {
+            background: #b71c1c;
+        }
+
+        .constant {
+            background: #7b1fa2;
+        }
+
+        .constant:hover {
+            background: #6a1b9a;
+        }
+
+        .memory {
+            background: #455a64;
+        }
+
+        .memory:hover {
+            background: #37474f;
+        }
+
+        @media (max-width: 450px) {
+            .calculator {
+                padding: 15px;
+            }
+
+            .display {
+                font-size: 2em;
+                padding: 15px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="history" id="history"></div>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="playSound('clear'); clearAll()">C</button>
+            <button class="memory" onclick="playSound('memory'); memoryOperation('MC')">MC</button>
+            <button class="memory" onclick="playSound('memory'); memoryOperation('MR')">MR</button>
+            <button class="memory" onclick="playSound('memory'); memoryOperation('M+')">M+</button>
+            <button class="memory" onclick="playSound('memory'); memoryOperation('M-')">M-</button>
+
+            <button class="function" onclick="playSound('function'); appendToDisplay('sin(')">sin</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('cos(')">cos</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('tan(')">tan</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('log(')">log</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('ln(')">ln</button>
+
+            <button onclick="playSound('number'); appendToDisplay('7')">7</button>
+            <button onclick="playSound('number'); appendToDisplay('8')">8</button>
+            <button onclick="playSound('number'); appendToDisplay('9')">9</button>
+            <button class="operator" onclick="playSound('operator'); appendToDisplay('/')">/</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('sqrt(')">√</button>
+
+            <button onclick="playSound('number'); appendToDisplay('4')">4</button>
+            <button onclick="playSound('number'); appendToDisplay('5')">5</button>
+            <button onclick="playSound('number'); appendToDisplay('6')">6</button>
+            <button class="operator" onclick="playSound('operator'); appendToDisplay('*')">×</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('^')">^</button>
+
+            <button onclick="playSound('number'); appendToDisplay('1')">1</button>
+            <button onclick="playSound('number'); appendToDisplay('2')">2</button>
+            <button onclick="playSound('number'); appendToDisplay('3')">3</button>
+            <button class="operator" onclick="playSound('operator'); appendToDisplay('-')">-</button>
+            <button class="constant" onclick="playSound('constant'); appendToDisplay('pi')">π</button>
+
+            <button onclick="playSound('number'); appendToDisplay('0')">0</button>
+            <button onclick="playSound('number'); appendToDisplay('.')">.</button>
+            <button onclick="playSound('function'); backspace()">←</button>
+            <button class="operator" onclick="playSound('operator'); appendToDisplay('+')">+</button>
+            <button class="constant" onclick="playSound('constant'); appendToDisplay('e')">e</button>
+
+            <button class="function" onclick="playSound('function'); appendToDisplay('(')">(</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay(')')">)</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('abs(')">|x|</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('exp(')">exp</button>
+            <button class="equals" onclick="playSound('equals'); calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let history = document.getElementById('history');
+        let memory = 0;
+        let expression = '';
+
+        // Web Audio API setup for sound effects
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type, value = 0) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            let frequency, duration, waveform;
+
+            switch (type) {
+                case 'number':
+                    frequency = 400; // Neutral tone for numbers
+                    duration = 0.1;
+                    waveform = 'sine';
+                    break;
+                case 'operator':
+                    frequency = 600; // Higher pitch for operators
+                    duration = 0.15;
+                    waveform = 'triangle';
+                    break;
+                case 'function':
+                    frequency = 500; // Mid-range for functions
+                    duration = 0.12;
+                    waveform = 'square';
+                    break;
+                case 'constant':
+                    frequency = 700; // Distinct high tone for constants
+                    duration = 0.15;
+                    waveform = 'sine';
+                    break;
+                case 'clear':
+                    frequency = 300; // Low tone for clear
+                    duration = 0.2;
+                    waveform = 'sawtooth';
+                    break;
+                case 'memory':
+                    frequency = 450; // Unique tone for memory
+                    duration = 0.15;
+                    waveform = 'sine';
+                    break;
+                case 'equals':
+                    frequency = 200 + Math.min(Math.abs(value) * 10, 600); // Dynamic based on result
+                    duration = 0.5;
+                    waveform = 'sine';
+                    break;
+                default:
+                    frequency = 400;
+                    duration = 0.1;
+                    waveform = 'sine';
+            }
+
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.type = waveform;
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function appendToDisplay(value) {
+            if (display.innerText === '0' && value !== '.') {
+                expression = value;
+            } else {
+                expression += value;
+            }
+            display.innerText = expression;
+        }
+
+        function clearAll() {
+            expression = '';
+            display.innerText = '0';
+        }
+
+        function backspace() {
+            expression = expression.slice(0, -1);
+            display.innerText = expression || '0';
+        }
+
+        function memoryOperation(op) {
+            let current = parseFloat(display.innerText) || 0;
+            switch (op) {
+                case 'MC':
+                    memory = 0;
+                    break;
+                case 'MR':
+                    expression = memory.toString();
+                    display.innerText = expression;
+                    break;
+                case 'M+':
+                    memory += current;
+                    break;
+                case 'M-':
+                    memory -= current;
+                    break;
+            }
+        }
+
+        function calculate() {
+            try {
+                let evalExpression = expression
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/e/g, 'Math.E')
+                    .replace(/sin\(/g, 'Math.sin(')
+                    .replace(/cos\(/g, 'Math.cos(')
+                    .replace(/tan\(/g, 'Math.tan(')
+                    .replace(/log\(/g, 'Math.log10(')
+                    .replace(/ln\(/g, 'Math.log(')
+                    .replace(/sqrt\(/g, 'Math.sqrt(')
+                    .replace(/abs\(/g, 'Math.abs(')
+                    .replace(/exp\(/g, 'Math.exp(')
+                    .replace(/\^/g, '**');
+
+                let result = eval(evalExpression);
+                if (isNaN(result) || !isFinite(result)) {
+                    throw new Error('Invalid calculation');
+                }
+
+                result = Math.round(result * 1000000) / 1000000; // Round to 6 decimal places
+                display.innerText = result;
+                expression = result.toString();
+
+                // Play sound effect for equals based on result
+                playSound('equals', result);
+
+                // Add to history
+                let historyItem = document.createElement('div');
+                historyItem.textContent = `${expression} = ${result}`;
+                history.prepend(historyItem);
+
+                // Keep only last 5 history items
+                while (history.children.length > 5) {
+                    history.removeChild(history.lastChild);
+                }
+            } catch (error) {
+                display.innerText = 'Error';
+                expression = '';
+                setTimeout(clearAll, 1000);
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+            if (/[0-9]/.test(key)) {
+                playSound('number');
+                appendToDisplay(key);
+            }
+            else if (key === '.') {
+                playSound('number');
+                appendToDisplay('.');
+            }
+            else if (key === '+') {
+                playSound('operator');
+                appendToDisplay('+');
+            }
+            else if (key === '-') {
+                playSound('operator');
+                appendToDisplay('-');
+            }
+            else if (key === '*') {
+                playSound('operator');
+                appendToDisplay('*');
+            }
+            else if (key === '/') {
+                playSound('operator');
+                appendToDisplay('/');
+            }
+            else if (key === '(') {
+                playSound('function');
+                appendToDisplay('(');
+            }
+            else if (key === ')') {
+                playSound('function');
+                appendToDisplay(')');
+            }
+            else if (key === 'Enter') {
+                calculate(); // Sound handled in calculate()
+            }
+            else if (key === 'Backspace') {
+                playSound('function');
+                backspace();
+            }
+            else if (key === 'Escape') {
+                playSound('clear');
+                clearAll();
+            }
+        });
+    </script>
+</body>
+</html>
