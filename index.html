@@ -127,6 +127,17 @@
             background: #37474f;
         }
 
+        .disabled {
+            background: #2e2e3f;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .disabled:hover {
+            background: #2e2e3f;
+            transform: none;
+        }
+
         @media (max-width: 450px) {
             .calculator {
                 padding: 15px;
@@ -149,46 +160,46 @@
         <div class="history" id="history"></div>
         <div class="display" id="display">0</div>
         <div class="buttons">
+            <!-- Row 1 -->
             <button class="clear" onclick="playSound('clear'); clearAll()">C</button>
             <button class="memory" onclick="playSound('memory'); memoryOperation('MC')">MC</button>
             <button class="memory" onclick="playSound('memory'); memoryOperation('MR')">MR</button>
             <button class="memory" onclick="playSound('memory'); memoryOperation('M+')">M+</button>
             <button class="memory" onclick="playSound('memory'); memoryOperation('M-')">M-</button>
 
-            <button class="function" onclick="playSound('function'); appendToDisplay('sin(')">sin</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay('cos(')">cos</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay('tan(')">tan</button>
+            <!-- Row 2 -->
             <button class="function" onclick="playSound('function'); appendToDisplay('log(')">log</button>
             <button class="function" onclick="playSound('function'); appendToDisplay('ln(')">ln</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('sqrt(')">√</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('abs(')">|x|</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('exp(')">exp</button>
 
+            <!-- Row 3 -->
             <button onclick="playSound('number'); appendToDisplay('7')">7</button>
             <button onclick="playSound('number'); appendToDisplay('8')">8</button>
             <button onclick="playSound('number'); appendToDisplay('9')">9</button>
             <button class="operator" onclick="playSound('operator'); appendToDisplay('/')">/</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay('sqrt(')">√</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay('^')">^</button>
 
+            <!-- Row 4 -->
             <button onclick="playSound('number'); appendToDisplay('4')">4</button>
             <button onclick="playSound('number'); appendToDisplay('5')">5</button>
             <button onclick="playSound('number'); appendToDisplay('6')">6</button>
             <button class="operator" onclick="playSound('operator'); appendToDisplay('*')">×</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay('^')">^</button>
+            <button class="operator" onclick="playSound('operator'); appendToDisplay('-')">-</button>
 
+            <!-- Row 5 -->
             <button onclick="playSound('number'); appendToDisplay('1')">1</button>
             <button onclick="playSound('number'); appendToDisplay('2')">2</button>
             <button onclick="playSound('number'); appendToDisplay('3')">3</button>
-            <button class="operator" onclick="playSound('operator'); appendToDisplay('-')">-</button>
-            <button class="constant" onclick="playSound('constant'); appendToDisplay('pi')">π</button>
+            <button class="operator" onclick="playSound('operator'); appendToDisplay('+')">+</button>
+            <button class="function" onclick="playSound('function'); appendToDisplay(')')">)</button>
 
+            <!-- Row 6 -->
             <button onclick="playSound('number'); appendToDisplay('0')">0</button>
             <button onclick="playSound('number'); appendToDisplay('.')">.</button>
             <button onclick="playSound('function'); backspace()">←</button>
-            <button class="operator" onclick="playSound('operator'); appendToDisplay('+')">+</button>
             <button class="constant" onclick="playSound('constant'); appendToDisplay('e')">e</button>
-
-            <button class="function" onclick="playSound('function'); appendToDisplay('(')">(</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay(')')">)</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay('abs(')">|x|</button>
-            <button class="function" onclick="playSound('function'); appendToDisplay('exp(')">exp</button>
             <button class="equals" onclick="playSound('equals'); calculate()">=</button>
         </div>
     </div>
@@ -312,11 +323,7 @@
         async function calculate() {
             try {
                 let evalExpression = expression
-                    .replace(/π/g, 'Math.PI')
                     .replace(/e/g, 'Math.E')
-                    .replace(/sin\(/g, 'Math.sin(')
-                    .replace(/cos\(/g, 'Math.cos(')
-                    .replace(/tan\(/g, 'Math.tan(')
                     .replace(/log\(/g, 'Math.log10(')
                     .replace(/ln\(/g, 'Math.log(')
                     .replace(/sqrt\(/g, 'Math.sqrt(')
