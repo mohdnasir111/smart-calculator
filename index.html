@@ -261,6 +261,16 @@
             oscillator.stop(audioContext.currentTime + duration);
         }
 
+        function playAnswerSpeech() {
+            return new Promise((resolve) => {
+                const utterance = new SpeechSynthesisUtterance("And the answer is");
+                utterance.volume = 0.7; // Slightly lower volume for clarity
+                utterance.rate = 1.2; // Slightly faster for snappy feel
+                utterance.onend = () => resolve(); // Resolve when speech ends
+                window.speechSynthesis.speak(utterance);
+            });
+        }
+
         function appendToDisplay(value) {
             if (display.innerText === '0' && value !== '.') {
                 expression = value;
@@ -299,7 +309,7 @@
             }
         }
 
-        function calculate() {
+        async function calculate() {
             try {
                 let evalExpression = expression
                     .replace(/π/g, 'Math.PI')
@@ -323,7 +333,8 @@
                 display.innerText = result;
                 expression = result.toString();
 
-                // Play sound effect for equals based on result
+                // Play "And the answer is" speech, then result tone
+                await playAnswerSpeech();
                 playSound('equals', result);
 
                 // Add to history
@@ -378,7 +389,8 @@
                 appendToDisplay(')');
             }
             else if (key === 'Enter') {
-                calculate(); // Sound handled in calculate()
+                playSound('equals');
+                calculate();
             }
             else if (key === 'Backspace') {
                 playSound('function');
